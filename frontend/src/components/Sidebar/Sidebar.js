@@ -1,12 +1,13 @@
 import { PureComponent } from "react";
 import './Sidebar.style.scss';
 import { Navigate } from "react-router-dom";
+import { getUserById } from "../../hooks/user";
+import { getFullChatData } from "../../hooks/chat";
 
 export class Sidebar extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            chats: [],
             redirecting: false,
             selectedChat: null
         };
@@ -14,61 +15,47 @@ export class Sidebar extends PureComponent {
         this.redirectToChat = this.redirectToChat.bind(this);
     }
 
-    componentDidMount() {
-        this.fetchChats();
-    }
-
-    async fetchChats() {
-        const response = await fetch('/api/chats/list/' + localStorage.getItem('user'));
-
-        const data = await response.json();
-
-        if (response.ok) {
-            this.setState({ chats: data });
-        }
-
-        console.log(data);
-    }
-
     redirectToChat(sender) {
         this.setState({ redirecting: true, selectedChat: sender });
     }
 
-    renderChatList() {
-        return (
-            <div className="sidebar__chatlist">
-                { this.renderChat() }
-                { this.renderChat() }
-                { this.renderChat() }
-                { this.renderChat() }
-                { this.renderChat() }
-            </div>
-        );
-    }
+    renderChat = (chat) => {
+        const { userData } = this.props;
+        const { participants, messages, updatedAt } = chat;
 
-    renderChat() {
-        const chat = {
-            sender: 'Ezhel',
-            message: 'Lorem ipsum',
-            time: '21:12'
-        };
+        const person = participants.find((participant) => participant !== userData.username);
 
-        const { sender, message, time } = chat;
+        const lastMessage = messages[messages.length - 1].content;
 
         return (
             <div
               className="sidebar__chat"
-              onClick={() => this.redirectToChat(sender) }
+              onClick={() => this.redirectToChat(person) }
             >
                 <img src="https://via.placeholder.com/50" alt="Avatar" />
                 <div className="sidebar__chat__info">
-                    <h3>{ sender }</h3>
-                    <p>{ message }</p>
+                    <h3>{ person }</h3>
+                    <p>{ lastMessage }</p>
                 </div>
-                <span>{ time }</span>
+                <span>{ new Date(updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }</span>
             </div>
         );
     }
+
+    renderChats() {
+        const { chats } = this.props;
+
+        if (!chats.length) {
+            return (
+                <div className="sidebar__chat empty">
+                    <span>No chats</span>
+                </div>
+            );
+        };
+
+        return chats.map((chat) => this.renderChat(chat));
+    }
+
     render() {
         const { redirecting, selectedChat } = this.state;
 
@@ -76,7 +63,9 @@ export class Sidebar extends PureComponent {
             <div className="sidebar">
                 { redirecting && <Navigate to={`/chat/${selectedChat}`} /> }
                 <h2>Chats</h2>
-                { this.renderChatList() }
+                <div className="sidebar__chatlist">
+                    { this.renderChats() }
+                </div>
             </div>
         );
     }

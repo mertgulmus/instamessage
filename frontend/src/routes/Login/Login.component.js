@@ -3,7 +3,7 @@ import { handleLogin } from '../../hooks/handleLogin';
 import './Login.style.scss';
 import { Link } from 'react-router-dom';
 
-class Login extends PureComponent {
+export class LoginComponent extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -13,18 +13,6 @@ class Login extends PureComponent {
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    componentDidMount() {
-        if (localStorage.getItem('user')) {
-            window.location.href = '/';
-        }
-    };
-
-    componentDidUpdate() {
-        if (localStorage.getItem('user')) {
-            window.location.href = '/';
-        }
     }
 
     onUsernameChange = (e) => {
@@ -38,27 +26,29 @@ class Login extends PureComponent {
     async handleSubmit(e) {
         e.preventDefault();
         const { username, password } = this.state;
+        const { showAlert } = this.props;
 
         const usernameRegex = /^[a-zA-Z0-9]+$/;
         const passwordRegex = /^[a-zA-Z0-9]+$/;
 
         if (!usernameRegex.test(username) || !passwordRegex.test(password)) {
-            this.setState({ alert: 'Please use proper formatting' });
+            showAlert({ message: 'Please use proper formatting', type: 'error' });
             return;
         }
 
         const response = await handleLogin(username, password);
 
         if (!response) {
-            this.setState({ alert: 'Invalid username or password' });
+            showAlert({ message: 'Invalid username or password', type: 'error' });
             return;
         }
+
+        showAlert({ message: 'Logged in', type: 'success' });
 
         window.location.href = '/';
     }
 
     render() {
-        const { alert } = this.state;
         return (
             <div className="login">
                 <h1>Login</h1>
@@ -66,7 +56,6 @@ class Login extends PureComponent {
                     <input type="text" placeholder="Username" onChange={this.onUsernameChange} />
                     <input type="password" placeholder="Password" onChange={this.onPasswordChange} />
                     <button onClick={ this.handleSubmit }>Login</button>
-                    <p>{ alert }</p>
                     <Link to="/signup">Don't have an account? Sign up</Link>
                 </form>
             </div>
@@ -74,4 +63,4 @@ class Login extends PureComponent {
     }
 }
 
-export default Login;
+export default LoginComponent;

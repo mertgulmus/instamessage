@@ -1,5 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit';
+import alertReducer from './dispatchers/alertSlice';
 
-export default configureStore({
-    reducer: {},
-})
+export const store = configureStore({
+    reducer: {
+        alert: alertReducer,
+    }
+});
+
+export default store;

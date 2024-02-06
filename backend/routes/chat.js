@@ -3,14 +3,17 @@ const {
     createChat,
     getChatsOfUser,
     deleteChat,
-    getAllChats
+    getAllChats,
+    prepareChatData
 } = require('../controllers/chatsController');
 
 const router = express.Router({ mergeParams: true });
 
 router.get('/', getAllChats);
 
-router.get('/list/:username', getChatsOfUser);
+router.get('/list/:id', getChatsOfUser);
+
+router.get('/info/:id/', prepareChatData);
 
 router.post('/', createChat);
 

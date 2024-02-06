@@ -44,7 +44,7 @@ const createMessage = async (req, res) => {
             content
         });
 
-        const chat = await Chats.findOne({ participants: [sender, receiver] });
+        const chat = await Chats.findOne({ participants: [sender, receiver] }) || await Chats.findOne({ participants: [receiver, sender] });
 
         if (chat) {
             chat.messages.push(message._id);

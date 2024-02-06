@@ -1,4 +1,7 @@
 const Chats = require('../models/chats');
+const Message = require('../models/message');
+const User = require('../models/user');
+
 const mongoose = require('mongoose');
 
 // GET all chats
@@ -14,9 +17,9 @@ const getAllChats = async (req, res) => {
 
 // GET chat by id
 const getChatsOfUser = async (req, res) => {
-    const { username } = req.params;
+    const { id } = req.params;
 
-    const chats = await Chats.find({ participants: username });
+    const chats = await Chats.find({ participants: id });
 
     if (!chats) {
         return res.status(404).send('No chat with that id');
@@ -58,9 +61,45 @@ const deleteChat = async (req, res) => {
     res.status(200).json(chat);
 };
 
+const prepareChatData = async (req, res) => {
+    const { id } = req.params;
+
+    const chat = await Chats.findById(id);
+
+    if (!chat) {
+        return res.status(404).send('No chat with that id');
+    }
+
+    const participants = chat.participants;
+
+    const participantUsernames = [];
+
+    for (let i = 0; i < participants.length; i++) {
+        const user = await User.findById(participants[i]);
+        participantUsernames.push(user.username);
+    }
+
+    const messages = chat.messages;
+
+    const messageContents = [];
+
+    for (let i = 0; i < messages.length; i++) {
+        const message = await Message.findById(messages[i]);
+        messageContents.push(message);
+    }
+
+    res.status(200).json({
+        id: chat._id,
+        participants: participantUsernames,
+        messages: messageContents,
+        updatedAt: chat.updatedAt
+    });
+}
+
 module.exports = {
     getAllChats,
     getChatsOfUser,
     createChat,
-    deleteChat
+    deleteChat,
+    prepareChatData
 };

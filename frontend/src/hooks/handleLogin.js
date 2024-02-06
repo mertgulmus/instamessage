@@ -1,29 +1,27 @@
 import sha256 from 'js-sha256';
 
-export const signup = (username, password, email, firstName, lastName) => {
+export const signup = async (username, password, email) => {
     const data = {
         username,
         password: sha256(password),
-        email,
-        firstName,
-        lastName
+        email
     };
 
-    return fetch(`/api/user/signup`, {
+    const response = await fetch('/api/user/signup', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                throw Error(data.error);
-            }
+    });
 
-            return data;
-        });
+    const user = await response.json();
+
+    if (user.error) {
+        return false;
+    }
+
+    return user;
 }
 
 export const handleLogin = async (username, password) => {
@@ -32,7 +30,7 @@ export const handleLogin = async (username, password) => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password: sha256(password)})
     });
 
     const data = await response.json();
