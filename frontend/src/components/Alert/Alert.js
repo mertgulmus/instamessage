@@ -7,7 +7,7 @@ export class Alert extends PureComponent {
 
         setTimeout(() => {
             hideAlert(id);
-        }, 7000);
+        }, 3000);
     }
 
     render() {

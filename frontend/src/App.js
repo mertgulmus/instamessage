@@ -2,7 +2,7 @@ import { PureComponent } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Messages from "./routes/Messages";
-import Contacts from "./routes/Contacts/Contacts";
+import Contacts from "./routes/Contacts";
 import Settings from "./routes/Settings/Settings";
 import Login from "./routes/Login";
 import Signup from "./routes/Signup";

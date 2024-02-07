@@ -1,5 +1,3 @@
-import { getUserById } from "./user";
-
 const getAllChatsOfUser = async (userId) => {
     const response = await fetch(`/api/chat/list/${userId}`);
     const chats = await response.json();
