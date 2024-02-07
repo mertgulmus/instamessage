@@ -1,8 +1,8 @@
 import { PureComponent } from "react";
-import { getFriends, getFriendRequests, acceptFriend, rejectFriend, addFriend, removeFriend } from "../../hooks/friend";
+import { retrieveUser } from "../../hooks/handleLogin";
+import { getFriends, getFriendRequests, acceptFriend, rejectFriend, addFriend, removeFriend, getSentRequests, cancelSentRequest } from "../../hooks/friend";
 import { getUserFromUsername } from "../../hooks/user";
 import './Contacts.style.scss';
-import { retrieveUser } from "../../hooks/handleLogin";
 
 export class ContactsComponent extends PureComponent {
     constructor(props) {
@@ -26,23 +26,45 @@ export class ContactsComponent extends PureComponent {
         const { user } = this.state;
         const friends = await getFriends(user);
         const requests = await getFriendRequests(user);
+        const sentRequests = await getSentRequests(user);
 
-        this.setState({ friends, requests });
-    };
+        this.setState({ friends, requests, sentRequests });
+    }
+
+    async componentDidUpdate(prevProps, prevState) {
+        const { activeTab, user } = this.state;
+
+        if (prevState.activeTab !== activeTab) {
+            if (activeTab === "friends") {
+                const friends = await getFriends(user);
+                this.setState({ friends });
+            } else if (activeTab === "requests") {
+                const requests = await getFriendRequests(user);
+                const sentRequests = await getSentRequests(user);
+                this.setState({ requests, sentRequests });
+            }
+        }
+    }
 
     handleAcceptRequest = async (e, request) => {
+        const { showAlert } = this.props;
+
         e.preventDefault();
         const { user } = this.state;
         const updatedUser = await acceptFriend(user, request._id);
 
+        showAlert({ message: 'Request accepted', type: 'success' });
         this.setState({ requests: updatedUser.friendRequests });
     }
 
     handleRejectRequest = async (e, request) => {
+        const { showAlert } = this.props;
         e.preventDefault();
+
         const { user } = this.state;
         const updatedUser = await rejectFriend(user, request._id);
 
+        showAlert({ message: 'Request rejected', type: 'success' });
         this.setState({ requests: updatedUser.friendRequests });
     }
 
@@ -68,15 +90,29 @@ export class ContactsComponent extends PureComponent {
     }
 
     handleRemoveFriend = async (e, friend) => {
+        const { showAlert } = this.props;
+
         e.preventDefault();
         const { user } = this.state;
         const updatedUser = await removeFriend(user, friend._id);
 
+        showAlert({ message: 'Friend removed', type: 'success' });
         this.setState({ friends: updatedUser.friends });
     }
 
     handleInputChange = (e) => {
         this.setState({ friendInput: e.target.value });
+    }
+
+    handleCancelRequest = async (e, request) => {
+        const { showAlert } = this.props;
+
+        e.preventDefault();
+        const { user } = this.state;
+        const updatedUser = await cancelSentRequest(user, request._id);
+
+        showAlert({ message: 'Request cancelled', type: 'success' });
+        this.setState({ sentRequests: updatedUser.sentRequests });
     }
 
     renderIncomingRequest = (request) => {
@@ -99,7 +135,7 @@ export class ContactsComponent extends PureComponent {
             return null;
         }
 
-        if (!requests.length) {
+        if (!requests?.length) {
             return (
                 <div className="contacts__list__item">
                     <span>No requests</span>
@@ -116,20 +152,20 @@ export class ContactsComponent extends PureComponent {
                 <img src="https://via.placeholder.com/50" alt="Avatar" />
                 <h3>{ request.username }</h3>
                 <div className="contacts__list__item__actions">
-                    <span>Sent</span>
+                    <button onClick={(e) => this.handleCancelRequest(e, request)}>Cancel?</button>
                 </div>
             </div>
         );
     }
 
     renderSentRequests() {
-        const { activeTab, requests } = this.state;
+        const { activeTab, sentRequests } = this.state;
 
         if (activeTab !== "requests") {
             return null;
         }
 
-        if (!requests.length) {
+        if (!sentRequests?.length) {
             return (
                 <div className="contacts__list__item">
                     <span>No requests</span>
@@ -137,7 +173,7 @@ export class ContactsComponent extends PureComponent {
             );
         }
 
-        return requests.map((request) => this.renderRequest(request));
+        return sentRequests.map((request) => this.renderSentRequest(request));
     }
 
     renderRequests() {
@@ -177,10 +213,10 @@ export class ContactsComponent extends PureComponent {
             return null;
         }
 
-        if (!friends.length) {
+        if (!friends?.length) {
             return (
                 <div className="contacts__list__item">
-                    <span>No friends</span>
+                    <p>You have no friends added. Click <span className="no_friend_button" onClick={() => this.setState({activeTab: "add"})}>here</span> to find your friends!</p>
                 </div>
             );
         }

@@ -6,6 +6,7 @@ import Contacts from "./routes/Contacts";
 import Settings from "./routes/Settings/Settings";
 import Login from "./routes/Login";
 import Signup from "./routes/Signup";
+import React from "react";
 
 export class App extends PureComponent {
     render() {
@@ -22,6 +23,6 @@ export class App extends PureComponent {
         </BrowserRouter>
         );
     }
-};
+}
 
 export default App;

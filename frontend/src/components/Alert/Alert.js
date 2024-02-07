@@ -1,5 +1,5 @@
-import { PureComponent } from "react";
-import "./Alert.style.scss";
+import { PureComponent } from 'react';
+import './Alert.style.scss';
 
 export class Alert extends PureComponent {
     componentDidMount() {

@@ -1,5 +1,5 @@
 const addFriend = async (id, friendId) => {
-    const response = await fetch(`/api/user/${id}/friends`, {
+    const response = await fetch(`/api/user/${id}/request/send`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -12,7 +12,7 @@ const addFriend = async (id, friendId) => {
 }
 
 const removeFriend = async (id, friendId) => {
-    const response = await fetch(`/api/user/${id}/friends/remove`, {
+    const response = await fetch(`/api/user/${id}/friend/remove`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -24,7 +24,7 @@ const removeFriend = async (id, friendId) => {
 }
 
 const acceptFriend = async (id, friendId) => {
-    const response = await fetch(`/api/user/${id}/friends/accept`, {
+    const response = await fetch(`/api/user/${id}/request/accept`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -36,7 +36,7 @@ const acceptFriend = async (id, friendId) => {
 };
 
 const rejectFriend = async (id, friendId) => {
-    const response = await fetch(`/api/user/${id}/friends/reject`, {
+    const response = await fetch(`/api/user/${id}/request/reject`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ const rejectFriend = async (id, friendId) => {
 }
 
 const getFriendRequests = async (id) => {
-    const response = await fetch(`/api/user/${id}/requests`);
+    const response = await fetch(`/api/user/${id}/requests/incoming`);
     const requests = await response.json();
     return requests;
 }
@@ -65,5 +65,17 @@ const getFriends = async (id) => {
     return friends;
 }
 
+const cancelSentRequest = async (id, friendId) => {
+    const response = await fetch(`/api/user/${id}/request/cancel`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ friendId })
+    });
+    const user = await response.json();
+    return user;
+}
 
-export { addFriend, removeFriend, acceptFriend, rejectFriend, getFriendRequests, getFriends };
+
+export { addFriend, removeFriend, acceptFriend, rejectFriend, getFriendRequests, getFriends, getSentRequests, cancelSentRequest };

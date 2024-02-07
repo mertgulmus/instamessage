@@ -32,19 +32,25 @@ export class HeaderComponent extends PureComponent {
         }
     }
 
-    renderAlert() {
+    renderAlert(alert) {
+        const { hideAlert } = this.props;
+        return <Alert key={alert.id} id={alert.id} alert={alert.message} type={alert.type} hideAlert={hideAlert} />;
+    }
+
+    renderAlerts() {
         const {
-            alerts,
-            hideAlert
+            alerts
         } = this.props;
 
         if (alerts.length === 0) {
             return null;
         }
 
-        const alert = alerts[0];
-
-        return <Alert key={alert.id} id={alert.id} alert={alert.message} type={alert.type} hideAlert={hideAlert} />;
+        return (
+            <div className="alerts">
+                {alerts.map(alert => this.renderAlert(alert))}
+            </div>
+        );
     }
 
     render() {
@@ -52,7 +58,7 @@ export class HeaderComponent extends PureComponent {
 
         return (
             <>
-                { this.renderAlert() }
+                { this.renderAlerts() }
                 <header className="header">
                     <div className="header__logo">
                         <h1>IM</h1>

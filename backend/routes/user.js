@@ -16,7 +16,8 @@ const {
     sendFriendRequest,
     acceptFriendRequest,
     rejectFriendRequest,
-    removeFriend
+    removeFriend,
+    cancelSentRequest
 } = require('../controllers/friendController');
 
 const router = express.Router();
@@ -32,11 +33,14 @@ router.post('/login', login);
 
 // Friend routes
 router.get('/:id/friends', getAllFriends);
-router.get('/:id/requests', getFriendRequests);
-router.get('/:id/sent', getSentRequests);
-router.post('/:id/friends', sendFriendRequest);
-router.post('/:id/friends/accept', acceptFriendRequest);
-router.post('/:id/friends/reject', rejectFriendRequest);
-router.post('/:id/friends/remove', removeFriend);
+router.post('/:id/friend/remove', removeFriend);
+
+// Friend request routes
+router.get('/:id/requests/incoming', getFriendRequests);
+router.get('/:id/requests/sent', getSentRequests);
+router.post('/:id/request/send', sendFriendRequest);
+router.post('/:id/request/accept', acceptFriendRequest);
+router.post('/:id/request/reject', rejectFriendRequest);
+router.post('/:id/request/cancel', cancelSentRequest);
 
 module.exports = router;

@@ -78,6 +78,6 @@ export class SignupComponent extends PureComponent {
             </div>
         );
     }
-};
+}
 
 export default SignupComponent;

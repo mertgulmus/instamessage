@@ -1,5 +1,5 @@
 .alert {
-    position: fixed;
+    position: relative;
     top: 64px;
     right: 0;
     padding: 20px;
@@ -12,6 +12,7 @@
     align-items: flex-start;
     justify-content: flex-start;
     width: 300px;
+    margin: 20px;
 
     &.error {
         border-left: 5px solid #f44336;

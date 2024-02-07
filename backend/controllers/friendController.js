@@ -175,6 +175,35 @@ const getSentRequests = async (req, res) => {
     }
 };
 
+const cancelSentRequest = async (req, res) => {
+    const { id } = req.params;
+    const { friendId } = req.body;
+
+    try {
+        const user = await User.findById(id);
+        const friend = await User.findById(friendId);
+
+        if (!user || !friend) {
+            return res.status(404).send({error: 'User or friend not found'});
+        }
+
+        if (!user.sentRequests.includes(friendId)) {
+            return res.status(400).send({error: 'You did not send a request to this user'});
+        }
+
+        user.sentRequests = user.sentRequests.filter(request => request !== friendId);
+
+        friend.friendRequests = friend.friendRequests.filter(request => request !== id);
+
+        await user.save();
+        await friend.save();
+
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
+
 module.exports = {
     getAllFriends,
     getFriendRequests,
@@ -182,5 +211,6 @@ module.exports = {
     sendFriendRequest,
     acceptFriendRequest,
     rejectFriendRequest,
-    removeFriend
+    removeFriend,
+    cancelSentRequest
 };
