@@ -20,4 +20,11 @@ const updateUser = async (id, data) => {
     });
 };
 
-export { getUserById, deleteUser, updateUser };
+const getUserFromUsername = async (username) => {
+    const response = await fetch(`/api/user/username/${username}`);
+    const user = await response.json();
+
+    return user;
+}
+
+export { getUserById, getUserFromUsername, deleteUser, updateUser };

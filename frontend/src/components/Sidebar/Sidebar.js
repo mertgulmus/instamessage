@@ -1,8 +1,6 @@
 import { PureComponent } from "react";
 import './Sidebar.style.scss';
 import { Navigate } from "react-router-dom";
-import { getUserById } from "../../hooks/user";
-import { getFullChatData } from "../../hooks/chat";
 
 export class Sidebar extends PureComponent {
     constructor(props) {

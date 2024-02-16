@@ -111,11 +111,24 @@ const login = async (req, res) => {
     res.status(200).json(user._id);
 };
 
+const getUserFromUsername = async (req, res) => {
+    const { username } = req.params;
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+        return res.status(404).send({ error: 'No user with that username' });
+    }
+
+    res.status(200).json(user);
+};
+
 module.exports = {
     createUser,
     getAllUsers,
     getUser,
     updateUser,
     deleteUser,
-    login
+    login,
+    getUserFromUsername
 };

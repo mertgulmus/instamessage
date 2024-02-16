@@ -1,5 +1,5 @@
-import { PureComponent } from "react";
-import "./Alert.style.scss";
+import { PureComponent } from 'react';
+import './Alert.style.scss';
 
 export class Alert extends PureComponent {
     componentDidMount() {
@@ -7,7 +7,7 @@ export class Alert extends PureComponent {
 
         setTimeout(() => {
             hideAlert(id);
-        }, 7000);
+        }, 3000);
     }
 
     render() {
