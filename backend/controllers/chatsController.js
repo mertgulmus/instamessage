@@ -33,6 +33,12 @@ const createChat = async (req, res) => {
     const { participants, messages } = req.body;
 
     try {
+        const existingChat = await Chats.findOne({ participants });
+
+        if (existingChat) {
+            return res.status(400).send('Chat already exists');
+        }
+
         const chat = await Chats.create({
             participants,
             messages

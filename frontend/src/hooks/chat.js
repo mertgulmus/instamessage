@@ -11,13 +11,15 @@ const getChatById = async (id) => {
 };
 
 const createChat = async (participants, messages) => {
-    await fetch('/api/chat', {
+    const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ participants, messages })
     });
+
+    return response;
 };
 
 const deleteChat = async (id) => {
@@ -32,10 +34,21 @@ const getFullChatData = async (id) => {
     return chat;
 };
 
+const sendMessage = async (sender, receiver, content) => {
+    await fetch('/api/message', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sender, receiver, content })
+    });
+}
+
 export {
     getAllChatsOfUser,
     getChatById,
     createChat,
     deleteChat,
-    getFullChatData
+    getFullChatData,
+    sendMessage
 };

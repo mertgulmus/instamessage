@@ -14,7 +14,9 @@ export class Sidebar extends PureComponent {
     }
 
     redirectToChat(sender) {
+        const { selectChat } = this.props;
         this.setState({ redirecting: true, selectedChat: sender });
+        selectChat(sender);
     }
 
     renderChat = (chat) => {
@@ -23,7 +25,8 @@ export class Sidebar extends PureComponent {
 
         const person = participants.find((participant) => participant !== userData.username);
 
-        const lastMessage = messages[messages.length - 1].content;
+        const lastMessage = messages[messages.length - 1];
+        const { content } = lastMessage || {};
 
         return (
             <div
@@ -33,7 +36,7 @@ export class Sidebar extends PureComponent {
                 <img src="https://via.placeholder.com/50" alt="Avatar" />
                 <div className="sidebar__chat__info">
                     <h3>{ person }</h3>
-                    <p>{ lastMessage }</p>
+                    <p>{ content }</p>
                 </div>
                 <span>{ new Date(updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }</span>
             </div>

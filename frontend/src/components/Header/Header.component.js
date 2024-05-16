@@ -1,6 +1,7 @@
 import { PureComponent } from "react";
 import { Link } from "react-router-dom";
 import { handleLogout } from '../../hooks/handleLogin';
+import { getUserById } from "../../hooks/user";
 
 import './Header.style.scss';
 import Alert from "../Alert/Alert";
@@ -10,15 +11,24 @@ export class HeaderComponent extends PureComponent {
         super(props);
 
         this.state = {
-            user: ''
+            user: '',
+            userData: {}
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         document.title = 'IM';
+        const localData = localStorage.getItem('user')?.replace(/"/g, '');
 
-        if (localStorage.getItem('user')) {
-            this.setState({ user: localStorage.getItem('user') });
+        if (localData) {
+            this.setState({
+                user: localData
+            });
+
+            const userData = await getUserById(localData);
+            this.setState({
+                userData
+            });
         }
 
         const route = window.location.pathname;
@@ -54,7 +64,9 @@ export class HeaderComponent extends PureComponent {
     }
 
     render() {
-        const { user } = this.state;
+        const {
+            userData: { username }
+        }  = this.state || {};
 
         return (
             <>
@@ -65,8 +77,11 @@ export class HeaderComponent extends PureComponent {
                     </div>
                     <nav className="header__nav">
                         <ul className="header__nav__list">
-                            {user && (
+                            {username && (
                             <>
+                            <li className="header__nav__list__item">
+                                Hello <b>{username}</b>!
+                            </li>
                             <li className="header__nav__list__item">
                                 <Link to="/">Messages</Link>
                             </li>
@@ -78,12 +93,12 @@ export class HeaderComponent extends PureComponent {
                             </li>
                             </>
                             )}
-                            {user && (
+                            {username && (
                                 <li className="header__nav__list__item">
                                     <button onClick={handleLogout}>Logout</button>
                                 </li>
                             )}
-                            {!user && (
+                            {!username && (
                                 <li className="header__nav__list__item">
                                     <Link to="/login">Login</Link>
                                 </li>

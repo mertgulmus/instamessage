@@ -1,6 +1,7 @@
 import { PureComponent } from "react";
 import { retrieveUser } from "../../hooks/handleLogin";
 import { getFriends, getFriendRequests, acceptFriend, rejectFriend, addFriend, removeFriend, getSentRequests, cancelSentRequest } from "../../hooks/friend";
+import { createChat } from "../../hooks/chat";
 import { getUserFromUsername } from "../../hooks/user";
 import './Contacts.style.scss';
 
@@ -115,6 +116,21 @@ export class ContactsComponent extends PureComponent {
         this.setState({ sentRequests: updatedUser.sentRequests });
     }
 
+    handleCreateChat = async (e, friend) => {
+        const { showAlert } = this.props;
+
+        e.preventDefault();
+        const { user } = this.state;
+        const request = await createChat([user, friend._id], []);
+
+        if (!request.ok) {
+            showAlert({ message: 'Chat already exists', type: 'error' });
+            return;
+        }
+
+        showAlert({ message: 'Chat created', type: 'success' });
+    }
+
     renderIncomingRequest = (request) => {
         return (
             <div className="contacts__list__item" key={ request._id }>
@@ -199,7 +215,7 @@ export class ContactsComponent extends PureComponent {
                 <img src="https://via.placeholder.com/50" alt="Avatar" />
                 <h3>{ contact.username }</h3>
                 <div className="contacts__list__item__actions">
-                    <button>Message</button>
+                    <button onClick={(e) => this.handleCreateChat(e, contact) }>Message</button>
                     <button onClick={(e) => this.handleRemoveFriend(e, contact)}>Remove</button>
                 </div>
             </div>
